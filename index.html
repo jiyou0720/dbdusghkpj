@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>친환경 생활 스코어 계산기</title>
+    <style>
+        body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-image: url('https://love.seoul.go.kr/Pds/Board/seoul_news_write/Editor/article_202201_12_01.jpg'); 
+    background-size: cover;
+    background-position: center;
+}
+
+        .calculator-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%; 
+        }
+
+        .calculator {
+            width: 500px; 
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .calculator:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #4CAF50;
+            margin-bottom: 20px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        input {
+            padding: 12px;
+            margin-bottom: 16px;
+            width: calc(100% - 24px);
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+
+        button {
+            padding: 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 16px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        #result-motivational {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #4CAF50;
+        }
+
+        #chart-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        #radar-chart,
+        #line-chart,
+        #cubic-chart {
+          
+            margin-top: 20px;
+            width: 300px;
+            height: 300px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        #radar-chart:hover,
+        #line-chart:hover,
+        #cubic-chart:hover {
+            transform: scale(1.1);
+        }
+
+        .chart-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        .chart {
+            width: 300px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            margin: 10px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .chart:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .chart h2 {
+            color: #4CAF50;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .chart svg {
+            margin-top: 10px;
+        }
+
+        #line-chart-container {
+            width: 400px;
+            height: 150px;
+        }
+
+        #cubic-chart-container {
+            width: 300px;
+            height: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator-container">
+        <div class="calculator">
+            <h1>친환경 생활 스코어 계산기</h1>
+
+            <label for="energy">에너지 소비 점수 (1부터 10까지): </label>
+            <input type="number" id="energy" min="0" max="10">
+
+            <label for="waste">폐기물 관리 점수 (1부터 10까지): </label>
+            <input type="number" id="waste" min="0" max="10">
+
+            <label for="transport">교통 수단 점수 (1부터 10까지): </label>
+            <input type="number" id="transport" min="0" max="10">
+
+            <label for="consumption">소비 패턴 점수 (1부터 10까지): </label>
+            <input type="number" id="consumption" min="0" max="10">
+
+            <label for="water">수자원 사용 점수 (1부터 10까지): </label>
+            <input type="number" id="water" min="0" max="10">
+
+            <label for="food">식생활 점수 (1부터 10까지): </label>
+            <input type="number" id="food" min="0" max="10">
+
+            <label for="infrastructure">친환경 인프라 활동 점수 (1부터 10까지): </label>
+            <input type="number" id="infrastructure" min="0" max="10">
+
+            
+            <button onclick="calculateScore()">계산하기</button>
+
+            <!-- 계산 결과 출력 -->
+            <div id="result"></div>
+
+            <!-- 동기 부여 -->
+            <div id="result-motivational"></div>
+        </div>
+
+        <div id="chart-container">
+        
+            <div id="radar-chart"></div>
+
+            <!-- 삼차함수 그래프 -->
+            <div id="cubic-chart-container">
+                <div id="cubic-chart"></div>
+            </div>
+
+            <!-- 선 차트 -->
+            <div id="line-chart-container">
+                <div id="line-chart"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script>
+        function calculateScore() {
+            const E = parseFloat(document.getElementById('energy').value) || 0;
+            const W = parseFloat(document.getElementById('waste').value) || 0;
+            const T = parseFloat(document.getElementById('transport').value) || 0;
+            const C = parseFloat(document.getElementById('consumption').value) || 0;
+            const S = parseFloat(document.getElementById('water').value) || 0;
+            const F = parseFloat(document.getElementById('food').value) || 0;
+            const I = parseFloat(document.getElementById('infrastructure').value) || 0;
+
+            const values = [E, W, T, C, S, F, I];
+
+            // 가중치
+            const E_w = 0.15;
+            const W_w = 0.12;
+            const T_w = 0.10;
+            const C_w = 0.08;
+            const S_w = 0.15;
+            const F_w = 0.10;
+            const I_w = 0.20;
+
+            //스코어 계산
+            const score = E * E_w + W * W_w + T * T_w + C * C_w + S * S_w + F * F_w + I * I_w;
+
+            // 결과 출력
+            document.getElementById('result').innerHTML = '친환경 생활 스코어: ' + score.toFixed(2);
+
+            //동기 부여 멘트 출력
+            displayMotivationalMessage(score);
+
+            // 차트 그리기
+            drawRadarChart(values);
+            drawLineChart(values);
+        }
+
+        function displayMotivationalMessage(score) {
+            //멘트 설정
+            let motivationalMessage = '';
+
+            if (score >= 7.5) {
+                motivationalMessage = '대단한 친환경 노력이에요! 계속 유지해 나가세요.';
+            } else if (score >= 5) {
+                motivationalMessage = '좋은 노력이지만 더 나은 친환경 습관을 만들 수 있을 거예요.';
+            } else {
+                motivationalMessage = '조금 더 노력해봐요. 작은 습관부터 시작해보세요.';
+            }
+
+
+            document.getElementById('result-motivational').innerHTML = motivationalMessage;
+        }
+
+        function drawRadarChart(data) {
+            const width = 300;
+            const height = 300;
+            const radius = Math.min(width, height) / 2;
+
+            const svg = d3.select("#radar-chart")
+                .html("")
+                .append("svg")
+                .attr("width", width)
+                .attr("height", height)
+                .append("g")
+                .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+            const x = d3.scaleLinear()
+                .range([0, 2 * Math.PI]);
+
+            const y = d3.scaleLinear()
+                .range([0, radius]);
+
+            const line = d3.lineRadial()
+                .angle((d, i) => i * 2 * Math.PI / data.length)
+                .radius(d => y(d));
+
+            x.domain([0, 2 * Math.PI]);
+            y.domain([0, 10]);
+
+            svg.append("polygon")
+                .datum(data)
+                .attr("class", "radarPolygonFill")
+                .style("fill", "rgba(76, 175, 80, 0.7)") 
+                .attr("points", function(d) {
+                    return data.map(function(d, i) {
+                        const angle = i * 2 * Math.PI / data.length;
+                        const xPos = Math.cos(angle) * y(d);
+                        const yPos = Math.sin(angle) * y(d);
+                        return [xPos, yPos].join(",");
+                    }).join(" ");
+                });
+
+            for (let i = 0; i < data.length; i++) {
+                const currentAngle = i * 2 * Math.PI / data.length;
+                const nextAngle = (i + 1) * 2 * Math.PI / data.length;
+
+                const currentXPos = Math.cos(currentAngle) * y(data[i]);
+                const currentYPos = Math.sin(currentAngle) * y(data[i]);
+
+                const nextXPos = Math.cos(nextAngle) * y(data[(i + 1) % data.length]);
+                const nextYPos = Math.sin(nextAngle) * y(data[(i + 1) % data.length]);
+
+                svg.append("line")
+                    .attr("x1", currentXPos)
+                    .attr("y1", currentYPos)
+                    .attr("x2", nextXPos)
+                    .attr("y2", nextYPos)
+                    .attr("class", "radarLineConnect");
+            }
+
+            for (let i = 0; i < data.length; i++) {
+                const angle = i * 2 * Math.PI / data.length;
+                const value = data[i];
+
+                const xPos = Math.cos(angle) * y(value);
+                const yPos = Math.sin(angle) * y(value);
+
+                svg.append("circle")
+                    .attr("cx", xPos)
+                    .attr("cy", yPos)
+                    .attr("r", 5)
+                    .attr("fill", "#4CAF50");
+            }
+        const radarChartContainer = d3.select("#radar-chart");
+        radarChartContainer.style("width", "300px")
+                            .style("height", "300px")
+                            .style("margin-top", "20px")
+                            .style("background-color", "#fff")
+                            .style("padding", "20px")
+                            .style("border-radius", "8px")
+                            .style("box-shadow", "0 0 15px rgba(0, 0, 0, 0.2)")
+                            .style("text-align", "center")
+                            .style("transition", "transform 0.3s, box-shadow 0.3s")
+                            .on("mouseenter", function() {
+                                d3.select(this).transition().duration(300).style("transform", "scale(1.1)");
+                            })
+                            .on("mouseleave", function() {
+                                d3.select(this).transition().duration(300).style("transform", "scale(1)");
+                            });
+                            // 각 꼭짓점에 번호 표시
+                            const labels = ["에너지", "폐기물", "교통", "소비", "수자원", "식생활", "인프라"];
+
+                            for (let i = 0; i < data.length; i++) {
+                                const angle = i * 2 * Math.PI / data.length;
+                                const value = data[i];
+
+                                const xPos = Math.cos(angle) * y(value);
+                                const yPos = Math.sin(angle) * y(value);
+
+                                svg.append("text")
+                                    .attr("x", xPos)
+                                    .attr("y", yPos)
+                                    .attr("dy", -10)  
+                                    .attr("text-anchor", "middle")
+                                    .text(labels[i]) 
+                                    .style("font-size", "14px")
+                                    .style("fill", "#333");
+                            }
+                                    
+    }
+
+function drawLineChart(data) {
+    const width = 300;
+    const height = 100;
+    const margin = { top: 10, right: 10, bottom: 20, left: 40 };
+
+   
+    const svg = d3.select("#line-chart")
+        .html("")
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+    const x = d3.scaleLinear()
+        .range([0, width])
+        .domain([0, data.length - 1]);
+
+    const y = d3.scaleLinear()
+        .range([height, 0])
+        .domain([0, d3.max(data)]);
+
+
+    const line = d3.line()
+        .x((d, i) => x(i))
+        .y(d => y(d));
+
+    
+    svg.append("path")
+        .datum(data)
+        .attr("fill", "none")
+        .attr("stroke", "#4CAF50")
+        .attr("stroke-width", 2)
+        .attr("d", line);
+
+
+    svg.append("g")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x));
+
+
+    svg.append("g")
+        .call(d3.axisLeft(y));
+
+
+ function drawCubicChart() {
+            const cubicChartContainer = d3.select("#cubic-chart");
+
+        
+            const svg = cubicChartContainer.append("svg")
+                .attr("width", 300)
+                .attr("height", 300);
+
+            
+            const data = d3.range(-10, 11, 0.5).map(function (x) {
+                return { x: x, y: x * x * x };
+            });
+
+         
+            const x = d3.scaleLinear()
+                .domain(d3.extent(data, function (d) { return d.x; }))
+                .range([0, 300]);
+
+            const y = d3.scaleLinear()
+                .domain(d3.extent(data, function (d) { return d.y; }))
+                .range([300, 0]);
+
+          
+            const line = d3.line()
+                .x(function (d) { return x(d.x); })
+                .y(function (d) { return y(d.y); });
+
+        
+            svg.append("path")
+                .datum(data)
+                .attr("fill", "none")
+                .attr("stroke", "#4CAF50")
+                .attr("stroke-width", 2)
+                .attr("d", line);
+
+     
+            cubicChartContainer.style("width", "300px")
+                .style("height", "300px")
+                .style("margin-top", "20px")
+                .style("background-color", "#fff")
+                .style("padding", "20px")
+                .style("border-radius", "8px")
+                .style("box-shadow", "0 0 15px rgba(0, 0, 0, 0.2)")
+                .style("text-align", "center")
+                .style("transition", "transform 0.3s, box-shadow 0.3s")
+                .on("mouseenter", function () {
+                    d3.select(this).transition().duration(300).style("transform", "scale(1.1)");
+                })
+                .on("mouseleave", function () {
+                    d3.select(this).transition().duration(300).style("transform", "scale(1)");
+                });
+        }
+
+        drawCubicChart();
+
+
+
+    
+        const lineChartContainer = d3.select("#line-chart");
+        lineChartContainer.style("width", "300px")
+                           .style("height", "100px")
+                           .style("margin-top", "20px")
+                           .style("background-color", "#fff")
+                           .style("padding", "20px")
+                           .style("border-radius", "8px")
+                           .style("box-shadow", "0 0 15px rgba(0, 0, 0, 0.2)")
+                           .style("text-align", "center")
+                           .style("transition", "transform 0.3s, box-shadow 0.3s")
+                           .on("mouseenter", function() {
+                               d3.select(this).transition().duration(300).style("transform", "scale(1.1)");
+                           })
+                           .on("mouseleave", function() {
+                               d3.select(this).transition().duration(300).style("transform", "scale(1)");
+                           });
+    }
+    </script>
+
+</body>
+</html>
